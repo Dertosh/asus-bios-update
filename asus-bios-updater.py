@@ -59,3 +59,11 @@ newBIOSversion = int(latest_bios_info["Version"])
 
 if newBIOSreleaseDate > currentBIOSreleaseDate and newBIOSversion > currentBIOSversion:
     bios_update(currentModel, latest_bios_info, EFI_path)
+else:
+    print("BIOS doesn't need updating.\n")
+    print("Current BIOS")
+    print("Release date: " + currentBIOSreleaseDate.strftime('%x'))
+    print("Version: " + str(currentBIOSversion))
+    print("\nNew BIOS")
+    print("Release date: " + newBIOSreleaseDate.strftime('%x'))
+    print("Version: " + str(newBIOSversion))
