@@ -1,4 +1,4 @@
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 import os
 import json
 import re
@@ -13,7 +13,8 @@ def get_latest_bios_info(model_name: str):
     cpu = ""
     url = "https://www.asus.com/support/api/product.asmx/GetPDBIOS?website=global&model=" + \
         model_name + "&cpu="+cpu+"&callback=supportpdpage"
-    rs = urlopen(url)
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    rs = urlopen(req)
     text = rs.readline().decode('ascii')
     json_text = re.findall(r"\((.*?)\)", text)[0]
     result = json.loads(json_text)
