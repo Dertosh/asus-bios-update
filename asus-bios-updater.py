@@ -16,10 +16,9 @@ def get_latest_bios_info(model_name: str):
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     rs = urlopen(req)
     text = rs.readline().decode('ascii')
-    json_text = re.findall(r"\((.*?)\)", text)[0]
+    json_text = re.findall(r"\((.*?)\)?$", text)[0]
     result = json.loads(json_text)
-
-    latest_bios = result["Result"]["Obj"][0]["Files"][0]
+    latest_bios = findFileBIOS(result["Result"]["Obj"])
     return latest_bios
 
 
@@ -44,12 +43,25 @@ def bios_update(model: str, latest_bios_info, efi_path: str):
     os.system("rm " + model+'*'+latest_bios_info["Version"]+".zip")
 
 
+def findFileBIOS(json_text: str):
+    """
+    Find latest BIOS file
+    json_text -- list of files
+    return file infor or null 
+    """
+    for string_file in json_text:
+        if string_file["Name"] == "BIOS":
+            return string_file["Files"][0]
+    return ""
+
+
 EFI_path = "/boot/EFI/"
 
 currentBIOSreleaseDate = datetime.datetime.strptime(
     os.popen('dmidecode -s bios-release-date').read()[:-1], '%m/%d/%Y')
 currentModel, currentBIOSversion = (
     os.popen('dmidecode -s bios-version').read()[:-1]).split('.')
+print(currentModel)
 currentBIOSversion = int(currentBIOSversion)
 
 latest_bios_info = get_latest_bios_info(currentModel)
