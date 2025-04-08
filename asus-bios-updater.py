@@ -37,7 +37,7 @@ def bios_update(model: str, latest_bios_info, efi_path: str):
     print("Release date: " + newBIOSreleaseDate.strftime('%x'))
     print("Version: " + str(newBIOSversion))
     os.system('cd ' + efi_path)
-    os.system('wget ' + latest_bios_info["DownloadUrl"]["Global"])
+    os.system('wget -O' + model + latest_bios_info["Version"]+".zip " + latest_bios_info["DownloadUrl"]["Global"])
     os.system("unzip "+model+'*' +
               latest_bios_info["Version"]+".zip -d " + EFI_path)
     os.system("rm " + model+'*'+latest_bios_info["Version"]+".zip")
@@ -56,6 +56,8 @@ def findFileBIOS(json_text: str):
 
 
 EFI_path = "/boot/EFI/"
+if not os.path.isdir('new_folder'):
+    EFI_path = "/boot/efi/"
 
 currentBIOSreleaseDate = datetime.datetime.strptime(
     os.popen('dmidecode -s bios-release-date').read()[:-1], '%m/%d/%Y')
